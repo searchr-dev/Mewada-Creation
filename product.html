@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - Mewada Store</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Remix Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+    <!-- GSAP + Plugins -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <!-- Lenis Smooth Scroll -->
+    <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+    <!-- Barba.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@barba/core@2.9.7/dist/barba.umd.js"></script>
+</head>
+
+<body>
+
+    <!-- Custom Cursor -->
+    <div class="cursor" id="cursor">
+        <div class="cursor-dot"></div>
+        <div class="cursor-ring"></div>
+        <div class="cursor-label"></div>
+        <div class="cursor-emoji" id="cursorEmoji"></div>
+    </div>
+
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- Page Transition Overlay -->
+    <div class="transition-overlay" id="transitionOverlay">
+        <div class="transition-slide t-slide-1"></div>
+        <div class="transition-slide t-slide-2"></div>
+        <div class="transition-slide t-slide-3"></div>
+        <div class="transition-slide t-slide-4"></div>
+        <div class="transition-slide t-slide-5"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="navbar-inner">
+            <a href="index.html" class="nav-logo magnetic" data-magnetic data-cursor-emoji="✨">
+                <span class="logo-letter">Mewada</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="index.html" class="nav-link magnetic" data-magnetic>
+                    <span class="nav-link-text">Home</span>
+                    <span class="nav-link-line"></span>
+                </a>
+                <a href="index.html#products" class="nav-link magnetic" data-magnetic>
+                    <span class="nav-link-text">Products</span>
+                    <span class="nav-link-line"></span>
+                </a>
+            </div>
+            <div class="nav-right">
+                <button class="theme-toggle magnetic" id="themeToggle" data-magnetic data-cursor-text="Theme">
+                    <i class="ri-sun-line"></i>
+                </button>
+                <button class="nav-cart magnetic" id="cartBtn" data-magnetic data-cursor-text="Bag">
+                    <i class="ri-shopping-bag-line"></i>
+                    <span class="cart-badge" id="cartCount">0</span>
+                </button>
+                <button class="nav-menu" id="menuBtn" aria-label="Menu">
+                    <div class="menu-line"></div>
+                    <div class="menu-line"></div>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-inner">
+            <a href="index.html" class="mobile-menu-link">Home</a>
+            <a href="index.html#products" class="mobile-menu-link">Products</a>
+        </div>
+    </div>
+
+    <!-- Barba Wrapper -->
+    <div data-barba="wrapper">
+        <main data-barba="container" data-barba-namespace="product" data-cursor-emoji="🛒">
+
+            <section class="product-details-section">
+                <div class="container">
+                    <div class="pd-grid" id="productDetailContainer">
+                        <!-- Content Injected via JS -->
+                        <div style="min-height: 80vh; display:flex; align-items:center; justify-content:center;">
+                            Loading Product...
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- EXPLORE MORE SECTION -->
+            <section class="products related-products-section">
+                <div class="container">
+                    <div class="section-head">
+                        <span class="section-label reveal-up">Related Essentials</span>
+                        <h2 class="section-title">
+                            <span class="title-word reveal-clip">Explore</span>
+                            <span class="title-word reveal-clip">More.</span>
+                        </h2>
+                    </div>
+                    <div class="products-grid" id="moreProductsGrid">
+                        <!-- More products injected via JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- FOOTER -->
+            <footer class="footer">
+                <div class="container">
+                    <div class="footer-top">
+                        <h2 class="footer-heading">
+                            <span class="title-word reveal-clip">Ready</span>
+                            <span class="title-word reveal-clip">to</span>
+                            <span class="title-word reveal-clip">order?</span>
+                        </h2>
+                        <a href="#" class="btn-cta large magnetic footer-cta" data-magnetic data-cursor-text="Let's go"
+                            id="footerWhatsapp">
+                            <span class="emoji-btn-inner">
+                                <span class="btn-text">Order via WhatsApp</span>
+                                <span class="btn-emoji">✨</span>
+                            </span>
+                            <span class="btn-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M7 17L17 7M17 7H7M17 7v10" />
+                                </svg>
+                            </span>
+                        </a>
+                    </div>
+                    <div class="footer-grid reveal-up">
+                        <div class="footer-col">
+                            <span class="footer-label">Mewada Store</span>
+                            <p>Premium quality, delivered with care.</p>
+                        </div>
+                        <div class="footer-col">
+                            <span class="footer-label">Shop</span>
+                            <a href="index.html#products">All Products</a>
+                            <a href="index.html#showcase">Showcase</a>
+                        </div>
+                        <div class="footer-col">
+                            <span class="footer-label">Info</span>
+                            <a href="#">Contact</a>
+                        </div>
+                        <div class="footer-col">
+                            <span class="footer-label">&copy; 2026</span>
+                            <p>All rights reserved.</p>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- Cart Sidebar -->
+    <aside class="cart-panel" id="cartPanel">
+        <div class="cart-panel-header">
+            <h3>Your Bag</h3>
+            <button class="cart-panel-close" id="cartPanelClose">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <div class="cart-panel-body" id="cartPanelBody">
+            <div class="cart-empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0" />
+                </svg>
+                <p>Your bag is empty</p>
+            </div>
+        </div>
+        <div class="cart-panel-footer" id="cartPanelFooter">
+            <div class="cart-total-row">
+                <span>Total</span>
+                <span class="cart-total-price" id="cartTotalPrice">₹0</span>
+            </div>
+            <button class="btn-checkout magnetic" data-magnetic id="checkoutBtn">
+                <span>Order via WhatsApp</span>
+                <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+                    <path
+                        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                </svg>
+            </button>
+        </div>
+    </aside>
+    <div class="cart-backdrop" id="cartBackdrop"></div>
+
+    <script src="js/products_db.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/product.js"></script>
+</body>
+
+</html>

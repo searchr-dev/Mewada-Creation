@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mewada Admin</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <style>
+        .admin-body {
+            background: #000;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* LOGIN CARD */
+        .login-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 3rem 2.5rem;
+            border-radius: 28px;
+            width: 90%;
+            max-width: 420px;
+            text-align: center;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            transform: translateY(20px);
+            opacity: 0;
+        }
+
+        .login-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 2.5rem;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #fff 0%, #888 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .login-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.1rem;
+            border-radius: 14px;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s;
+            text-align: center;
+            letter-spacing: 0.1em;
+        }
+
+        .login-input:focus {
+            border-color: #0071e3;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15);
+        }
+
+        .btn-login {
+            width: 100%;
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 1.1rem;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
+            background: #f5f5f7;
+        }
+
+        /* DASHBOARD */
+        .dashboard-container {
+            display: none;
+            width: 100%;
+            max-width: 1200px;
+            padding: 4rem 2rem;
+            min-height: 100vh;
+        }
+
+        .db-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .db-title {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.7rem 1.4rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .db-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 1.5rem;
+            border-radius: 20px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .db-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .db-add-card {
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1.25rem;
+            cursor: pointer;
+            min-height: 240px;
+        }
+
+        .add-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #0071e3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            box-shadow: 0 10px 20px rgba(0, 113, 227, 0.3);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s;
+        }
+
+        .modal-card {
+            background: #111;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2.5rem;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 500px;
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .form-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.9rem;
+            border-radius: 10px;
+            color: #fff;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .btn-save {
+            background: #0071e3;
+            color: #fff;
+            border: none;
+            padding: 0.9rem 1.8rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-save:hover {
+            background: #0077ed;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body class="admin-body">
+
+    <!-- Custom Cursor -->
+    <div class="cursor" id="cursor">
+        <div class="cursor-dot"></div>
+        <div class="cursor-ring"></div>
+        <div class="cursor-label"></div>
+    </div>
+
+    <!-- LOGIN SCREEN -->
+    <div class="login-card" id="loginCard">
+        <h1 class="login-title">Admin Access</h1>
+        <div class="login-input-group">
+            <input type="password" class="login-input" id="passwordInput" placeholder="Enter Secret Key" autofocus>
+        </div>
+        <button class="btn-login" id="loginBtn">Unlock</button>
+        <div class="login-error" id="loginError">Invalid Access Key</div>
+    </div>
+
+    <!-- ADMIN DASHBOARD -->
+    <div class="dashboard-container" id="dashboard">
+        <header class="db-header">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <a href="index.html"
+                    style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%; transition: all 0.3s;"
+                    onmouseover="this.style.background='rgba(255,255,255,0.2)'"
+                    onmouseout="this.style.background='rgba(255,255,255,0.1)'" title="Back to Home">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 12H5M12 19l-7-7 7-7" />
+                    </svg>
+                </a>
+                <h2 class="db-title">Dashboard</h2>
+            </div>
+            <button class="btn-logout" id="logoutBtn">Exit Secure Mode</button>
+        </header>
+
+        <div class="db-grid" id="productGrid">
+            <!-- Add New Card -->
+            <div class="db-card db-add-card" id="addProductBtn">
+                <div class="add-icon">+</div>
+                <span>Add New Product</span>
+            </div>
+            <!-- Products will be injected here -->
+        </div>
+    </div>
+
+    <!-- ADD/EDIT PRODUCT MODAL -->
+    <div class="modal-overlay" id="productModal">
+        <div class="modal-card">
+            <h3 id="modalTitle" style="margin-bottom: 1.5rem; font-size: 1.25rem;">New Product</h3>
+            <input type="hidden" id="editProductId">
+            <div class="form-group">
+                <label class="form-label">Product Name</label>
+                <input type="text" class="form-input" id="pName">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Price</label>
+                <input type="number" class="form-input" id="pPrice">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <input type="text" class="form-input" id="pDesc">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Product Image</label>
+                <input type="file" class="form-input" id="pImageUpload" accept="image/*" style="padding: 0.5rem;">
+                <input type="hidden" id="pImgBase64">
+                <div id="imagePreview" style="margin-top: 1rem; display: none;">
+                    <img src="" alt="Preview"
+                        style="width: 100%; max-height: 200px; object-fit: cover; border-radius: 8px;">
+                </div>
+            </div>
+            <div class="form-actions">
+                <button class="btn-cancel" id="closeModal">Cancel</button>
+                <button class="btn-save" id="saveProduct">Save Product</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/products_db.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+
+</html>

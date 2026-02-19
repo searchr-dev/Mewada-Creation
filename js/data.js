@@ -6,10 +6,9 @@ const APP_CONFIG = {
     WHATSAPP_NUMBER: '917490994777',
     STORAGE_KEY: 'mewada_products_enc', // Changed key to indicate encryption
     SECRET_KEY: 'mewada_secure_v1', // Simple key for XOR obfuscation
-    ADMIN_SESSION_KEY: 'mewada_admin_session'
+    ADMIN_SESSION_KEY: 'mewada_admin_session',
+    FESTIVAL_MODE_KEY: 'mewada_festival_mode'
 };
-
-// DEFAULT_PRODUCTS replaced by ENCRYPTED_PRODUCTS_DB from js/products_db.js
 
 // =========================================
 // ENCRYPTION UTILS (XOR Cipher)
@@ -75,6 +74,15 @@ const DataManager = {
     getProductById: function (id) {
         const products = this.getProducts();
         return products.find(p => p.id === String(id));
+    },
+
+    // Festival Mode Management
+    isFestivalMode: function () {
+        return localStorage.getItem(APP_CONFIG.FESTIVAL_MODE_KEY) === 'true';
+    },
+
+    setFestivalMode: function (enabled) {
+        localStorage.setItem(APP_CONFIG.FESTIVAL_MODE_KEY, enabled ? 'true' : 'false');
     },
 
     // Check if we need to migrate from old plain text storage

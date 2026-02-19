@@ -144,6 +144,103 @@
             border-color: rgba(255, 255, 255, 0.15);
         }
 
+        .db-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .db-product-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 1.25rem;
+            border-radius: 20px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .db-product-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .db-product-img {
+            height: 160px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .db-product-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .db-product-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        /* Festival Toggle */
+        .festival-toggle-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #30d158;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(20px);
+        }
+
         .db-add-card {
             border: 1px dashed rgba(255, 255, 255, 0.2);
             display: flex;
@@ -156,15 +253,16 @@
         }
 
         .add-icon {
-            width: 56px;
-            height: 56px;
+            width: 64px;
+            height: 64px;
             border-radius: 50%;
-            background: #0071e3;
+            background: linear-gradient(135deg, #0071e3 0%, #6c5ce7 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.75rem;
-            box-shadow: 0 10px 20px rgba(0, 113, 227, 0.3);
+            font-size: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 113, 227, 0.4);
+            margin-bottom: 0.5rem;
         }
 
         /* Modal */
@@ -215,9 +313,34 @@
             transition: all 0.3s;
         }
 
-        .btn-save:hover {
-            background: #0077ed;
-            transform: scale(1.05);
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: scale(1) translateY(0);
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.9rem 1.8rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
         }
     </style>
 </head>
@@ -244,19 +367,29 @@
     <!-- ADMIN DASHBOARD -->
     <div class="dashboard-container" id="dashboard">
         <header class="db-header">
-            <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
                 <a href="index.html"
-                    style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%; transition: all 0.3s;"
-                    onmouseover="this.style.background='rgba(255,255,255,0.2)'"
-                    onmouseout="this.style.background='rgba(255,255,255,0.1)'" title="Back to Home">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 50%; transition: all 0.3s; color: #fff;"
+                    onmouseover="this.style.background='rgba(255,255,255,0.15)'"
+                    onmouseout="this.style.background='rgba(255,255,255,0.08)'" title="Back to Home">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                         stroke-linecap="round" stroke-linejoin="round">
                         <path d="M19 12H5M12 19l-7-7 7-7" />
                     </svg>
                 </a>
                 <h2 class="db-title">Dashboard</h2>
             </div>
-            <button class="btn-logout" id="logoutBtn">Exit Secure Mode</button>
+
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <div class="festival-toggle-wrap">
+                    <span style="font-size: 0.85rem; font-weight: 600; color: #30d158;">Festival Mode</span>
+                    <label class="switch">
+                        <input type="checkbox" id="festivalToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <button class="btn-logout" id="logoutBtn">Exit Secure Mode</button>
+            </div>
         </header>
 
         <div class="db-grid" id="productGrid">
@@ -278,9 +411,16 @@
                 <label class="form-label">Product Name</label>
                 <input type="text" class="form-input" id="pName">
             </div>
-            <div class="form-group">
-                <label class="form-label">Price</label>
-                <input type="number" class="form-input" id="pPrice">
+            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Regular Price (₹)</label>
+                    <input type="number" class="form-input" id="pPrice">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Sale Price (₹) <span
+                            style="font-size:0.7rem; opacity:0.6;">(Optional)</span></label>
+                    <input type="number" class="form-input" id="pSalePrice">
+                </div>
             </div>
             <div class="form-group">
                 <label class="form-label">Description</label>

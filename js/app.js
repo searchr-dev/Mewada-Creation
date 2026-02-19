@@ -537,13 +537,15 @@
         // Use DataManager (from js/data.js)
         const products = DataManager.getProducts();
 
-        grid.innerHTML = products.map(p => `
+        grid.innerHTML = products.map(p => {
+            const hasSale = p.salePrice && p.salePrice < p.price;
+            return `
             <article class="product-card" data-cursor-text="View" data-product-id="${p.id}">
                 <div class="card-img">
                     <div class="card-img-inner">
                         <img src="${p.image}" alt="${p.name}" loading="lazy">
                     </div>
-                    ${p.tag ? `<div class="card-tag">${p.tag}</div>` : ''}
+                    ${hasSale ? `<div class="card-tag" style="background:#30d158">Sale</div>` : (p.tag ? `<div class="card-tag">${p.tag}</div>` : '')}
                 </div>
                 <div class="card-body">
                     <div class="card-meta">
@@ -551,7 +553,10 @@
                         <p class="card-desc">${p.desc}</p>
                     </div>
                     <div class="card-actions">
-                        <span class="card-price">₹${p.price.toLocaleString()}</span>
+                        <div class="card-price-wrap">
+                            ${hasSale ? `<span class="card-price-original" style="font-size:0.85rem; text-decoration:line-through; opacity:0.5; display:block; margin-bottom:-4px;">₹${p.price.toLocaleString()}</span>` : ''}
+                            <span class="card-price" style="${hasSale ? 'color:#30d158;' : ''}">₹${(hasSale ? p.salePrice : p.price).toLocaleString()}</span>
+                        </div>
                         <button class="btn-add magnetic" data-product-id="${p.id}" data-magnetic>
                             <span class="emoji-btn-inner">
                                 <span class="btn-text">Add</span>
@@ -565,7 +570,8 @@
                     </div>
                 </div>
             </article>
-        `).join('');
+        `;
+        }).join('');
     }
 
     function initProductInteractions() {
@@ -756,6 +762,26 @@
         // Touch events
         logo.addEventListener('touchstart', startPress, { passive: true });
         logo.addEventListener('touchend', cancelPress);
+    }
+
+    // =========================================
+    // FESTIVAL BANNER LOGIC
+    // =========================================
+    function initFestivalBanner() {
+        const banner = document.getElementById('festivalBanner');
+        const closeBtn = document.getElementById('festivalClose');
+
+        if (!banner) return;
+
+        if (DataManager.isFestivalMode()) {
+            banner.classList.add('active');
+        }
+
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                banner.classList.remove('active');
+            });
+        }
     }
 
     // =========================================
@@ -1077,14 +1103,18 @@
     // =========================================
     async function masterInit() {
         await runPreloader();
-        renderProducts(); // Render before animations
-        animateHeroEntrance();
+        // Global App Init
         initLenis();
         initScrollAnimations();
         initCursorInteractions();
         initMagnetic();
         initNavLinks();
         initSecretAccess();
+        initFestivalBanner();
+
+        // Initial render
+        renderProducts();
+        animateHeroEntrance();
         initProductInteractions();
         initCartButtons();
         initTheme();

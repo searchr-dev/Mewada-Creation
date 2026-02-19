@@ -24,7 +24,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Render Main Product
     document.title = `${product.name} - Mewada Store`;
-    const waMessage = `Hi, I'm interested in buying your *${product.name}* (₹${product.price}). Is it available?`;
+    const hasSale = product.salePrice && product.salePrice < product.price;
+    const currentPrice = hasSale ? product.salePrice : product.price;
+
+    const waMessage = `Hi, I'm interested in buying your *${product.name}* (₹${currentPrice.toLocaleString()}). Is it available?`;
     const waLink = `https://wa.me/${APP_CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(waMessage)}`;
 
     container.innerHTML = `
@@ -41,8 +44,11 @@ document.addEventListener('DOMContentLoaded', () => {
             <h1 class="pd-title reveal-up">${product.name}</h1>
             
             <div class="pd-price-row reveal-up">
-                <span class="pd-price">₹${product.price.toLocaleString()}</span>
-                ${product.tag ? `<span class="pd-tag">${product.tag}</span>` : ''}
+                <div style="display:flex; flex-direction:column;">
+                    ${hasSale ? `<span style="font-size:1rem; text-decoration:line-through; opacity:0.5; margin-bottom:4px;">₹${product.price.toLocaleString()}</span>` : ''}
+                    <span class="pd-price" style="${hasSale ? 'color:#30d158;' : ''}">₹${currentPrice.toLocaleString()}</span>
+                </div>
+                ${hasSale ? `<span class="pd-tag" style="background:#30d158">SALE</span>` : (product.tag ? `<span class="pd-tag">${product.tag}</span>` : '')}
             </div>
 
             <p class="pd-desc reveal-up">${product.desc}</p>
@@ -78,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         moreGrid.innerHTML = '';
         otherProducts.forEach(p => {
+            const hasSale = p.salePrice && p.salePrice < p.price;
             const card = document.createElement('article');
             card.className = 'product-card reveal-up';
             card.dataset.cursorText = 'View';
@@ -87,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="card-img-inner">
                         <img src="${p.image}" alt="${p.name}" loading="lazy">
                     </div>
-                    ${p.tag ? `<div class="card-tag">${p.tag}</div>` : ''}
+                    ${hasSale ? `<div class="card-tag" style="background:#30d158">Sale</div>` : (p.tag ? `<div class="card-tag">${p.tag}</div>` : '')}
                 </div>
                 <div class="card-body">
                     <div class="card-meta">
@@ -95,7 +102,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         <p class="card-desc">${p.desc}</p>
                     </div>
                     <div class="card-actions">
-                        <span class="card-price">₹${p.price.toLocaleString()}</span>
+                        <div class="card-price-wrap">
+                            ${hasSale ? `<span class="card-price-original" style="font-size:0.8rem; text-decoration:line-through; opacity:0.5; display:block; margin-bottom:-2px;">₹${p.price.toLocaleString()}</span>` : ''}
+                            <span class="card-price" style="${hasSale ? 'color:#30d158;' : ''}">₹${(hasSale ? p.salePrice : p.price).toLocaleString()}</span>
+                        </div>
                         <button class="btn-add magnetic" data-product-id="${p.id}" data-magnetic>
                             <span class="emoji-btn-inner">
                                 <span class="btn-text">Add</span>

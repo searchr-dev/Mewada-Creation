@@ -60,6 +60,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const previewImg = imagePreview.querySelector('img');
     const modalTitle = document.getElementById('modalTitle');
     const editProductId = document.getElementById('editProductId');
+    const pSalePrice = document.getElementById('pSalePrice');
+    const festivalToggle = document.getElementById('festivalToggle');
 
     // =========================================
     // AUTHENTICATION
@@ -81,6 +83,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function showDashboard() {
         loginCard.style.display = 'none';
         dashboard.style.display = 'block';
+
+        // Init Festival Toggle
+        if (festivalToggle) {
+            festivalToggle.checked = DataManager.isFestivalMode();
+            festivalToggle.addEventListener('change', (e) => {
+                DataManager.setFestivalMode(e.target.checked);
+            });
+        }
+
         renderAdminProducts();
 
         gsap.fromTo('.db-header',
@@ -129,24 +140,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const products = DataManager.getProducts();
 
         // Remove old product cards, keep add button
-        const oldCards = productGrid.querySelectorAll('.db-card:not(.db-add-card)');
+        const oldCards = productGrid.querySelectorAll('.db-product-card');
         oldCards.forEach(c => c.remove());
 
         products.forEach(p => {
             const el = document.createElement('div');
-            el.className = 'db-card';
+            el.className = 'db-product-card';
             el.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:1rem;">
-                    <h3 style="font-size:1.1rem; font-weight:600;">${p.name}</h3>
-                    <span style="color:var(--g4); font-size:0.9rem;">₹${p.price}</span>
-                </div>
-                <div style="height:120px; background:url(${p.image}) center/cover; border-radius:8px; margin-bottom:1rem; opacity:0.8;"></div>
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-size:0.75rem; color:var(--g4); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:120px;" title="${p.image}">${p.image.startsWith('data:') ? 'Base64 Image' : p.image.split('/').pop()}</span>
-                    <div style="display:flex; gap:0.5rem;">
-                        <button class="btn-logout" style="background:rgba(0,113,227,0.15); color:var(--blue); padding:0.4rem 0.8rem;" onclick="window.editProduct('${p.id}')">Edit</button>
-                        <button class="btn-logout" style="background:rgba(255,50,50,0.15); color:#ff6b6b; padding:0.4rem 0.8rem;" onclick="window.deleteProduct('${p.id}')">Delete</button>
+                <div class="db-product-info">
+                    <div>
+                        <h3 style="font-size:1.05rem; font-weight:600; margin-bottom:0.25rem;">${p.name}</h3>
+                        <div style="display:flex; gap:0.5rem; align-items:baseline;">
+                            ${p.salePrice ? `<span style="color:#30d158; font-weight:700; font-size:1rem;">₹${p.salePrice}</span>` : ''}
+                            <span style="color:rgba(255,255,255,0.5); font-size:0.85rem; ${p.salePrice ? 'text-decoration:line-through;' : 'font-weight:600; color:#fff'}">₹${p.price}</span>
+                        </div>
                     </div>
+                </div>
+                <div class="db-product-img" style="background-image:url(${p.image})"></div>
+                <div class="db-product-actions">
+                    <button class="btn-logout" style="background:rgba(0,113,227,0.15); color:#0071e3; border:none; padding:0.4rem 0.8rem; font-size:0.75rem;" onclick="window.editProduct('${p.id}')">Edit</button>
+                    <button class="btn-logout" style="background:rgba(255,50,50,0.15); color:#ff6b6b; border:none; padding:0.4rem 0.8rem; font-size:0.75rem;" onclick="window.deleteProduct('${p.id}')">Delete</button>
                 </div>
             `;
             productGrid.appendChild(el);
@@ -161,6 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
         editProductId.value = product.id;
         pName.value = product.name;
         pPrice.value = product.price;
+        pSalePrice.value = product.salePrice || '';
         pDesc.value = product.desc;
         pImgBase64.value = product.image;
 
@@ -175,6 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const products = DataManager.getProducts();
         const newProducts = products.filter(p => p.id !== String(id));
         DataManager.saveProducts(newProducts);
+        renderAdminProducts(); // Refresh UI
     }
 
     // Modal Logic
@@ -184,6 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalOverlay.classList.add('active');
         pName.value = '';
         pPrice.value = '';
+        pSalePrice.value = '';
         pDesc.value = '';
         pImgBase64.value = '';
         imagePreview.style.display = 'none';
@@ -212,6 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
     saveProductBtn.addEventListener('click', () => {
         const name = pName.value;
         const price = parseInt(pPrice.value);
+        const salePrice = parseInt(pSalePrice.value) || null;
         const desc = pDesc.value;
         const img = pImgBase64.value || 'https://via.placeholder.com/400';
         const id = editProductId.value;
@@ -225,17 +242,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (id) {
             // Edit existing
-            const index = products.findIndex(p => p.id === id);
+            const index = products.findIndex(p => p.id === String(id));
             if (index !== -1) {
-                products[index] = { ...products[index], name, price, desc, image: img };
+                products[index] = { ...products[index], name, price, salePrice, desc, image: img };
             }
         } else {
             // Add new
-            const newId = (Math.max(...products.map(p => parseInt(p.id) || 0), 0) + 1).toString();
+            const ids = products.map(p => parseInt(p.id) || 0);
+            const newId = (ids.length > 0 ? Math.max(...ids) + 1 : 1).toString();
+
             products.push({
                 id: newId,
                 name,
                 price,
+                salePrice,
                 desc,
                 image: img,
                 tag: 'New'
@@ -243,6 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         DataManager.saveProducts(products);
+        renderAdminProducts(); // Refresh UI
         modalOverlay.classList.remove('active');
     });
 
